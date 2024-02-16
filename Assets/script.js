@@ -110,3 +110,51 @@ var queryURLUV = "https://api.openweathermap.org/data/2.5/uvi?&appid=2160410541d
                }
         });
     },
+      //I also need to make a call for the 5-day forecast which will display in the
+//div "5day" and append those to the page. Need to figure out how to include
+//weather icons based upon the weather that day
+$.ajax({
+    url: queryURLforecast,
+    method: "GET"
+}).then(function (response){
+    console.log(response);
+    //console.log(queryURLforecast)
+    var results = response.list
+    //need to empty display area as results are stacking
+    $("#5day").empty();
+    //looping through part of response I want
+    for (var i = 0; i < results.length; i += 8){
+        //creating area for forecast to show
+        var fiveDay = $("<div class='card shadow-lg text-white bg-primary mx-auto mb-10 p-2' style='width: 140px; height: 180px;'>");
+        var date = new Date (results[i].dt * 1000).toLocaleDateString('en-US');
+        var temp2 = results[i].main.temp;
+        var humid = results[i].main.humidity;
+
+        //creating html for results
+        var dateh4 = $("<h4 class = 'card-title'>").text(date);
+        var temp2 = $("<p class = 'card-text card1'>").text ("Temp: " + temp2 + " \xB0");
+        var humid = $("<p class = 'card-text card1'>").text("Humidity: " + humid + " %");
+
+        fiveDay.append(dateh4, temp2, humid);
+
+        $("#5day").append(fiveDay);
+        }
+    })
+)};
+citysaveBtn();
+
+//Buttons that store saved data and display city name in there. Getting items from
+//local storage
+function citysaveBtn () {
+    var lastSearch = JSON.parse(localStorage.getItem("userInput"));
+    var searchDiv = $("<button class='btn-primary btn-outline-dark mt-1 bg-primary rounded' style='width: 165px;'>").text(lastSearch);
+    var pastSearch = $("<div>");
+    pastSearch.append(searchDiv)
+    //using prepend so users search history displays in correct order
+    $("#searchHistory").prepend(pastSearch);
+    //on click for button that stores city searches and displays them
+    $(searchDiv).click(function () {
+        console.log($(this).text());
+        citySearch($(this).text());
+})
+};
